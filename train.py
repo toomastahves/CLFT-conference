@@ -14,9 +14,12 @@ parser = argparse.ArgumentParser(description='CLFT Training')
 parser.add_argument('-c', '--config', type=str, required=False, help='The path of the config file')
 args = parser.parse_args()
 config_file = args.config
+print("Config file path: ", args.config)
 
 with open(config_file, 'r') as f:
     config = json.load(f)
+
+print(config)
 
 np.random.seed(config['General']['seed'])
 trainer = Trainer(config, args)
