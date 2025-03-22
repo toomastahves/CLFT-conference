@@ -20,9 +20,11 @@ with open(config_file, 'r') as f:
     config = json.load(f)
 
 print(config)
+backbone = config['CLI']['backbone']
+mode = config['CLI']['mode']
 
 np.random.seed(config['General']['seed'])
-trainer = Trainer(config, args)
+trainer = Trainer(config, backbone)
 
 train_data = Dataset(config, 'train', './waymo_dataset/splits_clft/train_all.txt')
 train_dataloader = DataLoader(train_data,
@@ -38,8 +40,7 @@ valid_dataloader = DataLoader(valid_data,
                               pin_memory=True,
                               drop_last=True)
 
-backbone = config['CLI']['backbone']
-mode = config['CLI']['mode']
+
 if backbone == 'clft':
     trainer.train_clft(train_dataloader, valid_dataloader, modal=mode)
 
