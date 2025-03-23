@@ -121,35 +121,13 @@ def image_overlay(image, segmented_image):
 
 
 def save_model_dict(config, epoch, model, modality, optimizer, save_check=False):
-    sensor_modality = modality
     creat_dir(config)
-    if save_check is False:
-        if sensor_modality == 'rgb':
-            torch.save({'epoch': epoch,
-                        'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict()},
-                       config['Log']['logdir_rgb']+f"checkpoint_{epoch}.pth")
-        elif sensor_modality == 'lidar':
-            torch.save({'epoch': epoch,
-                        'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict()},
-                       config['Log']['logdir_lidar']+f"checkpoint_{epoch}.pth")
-        elif sensor_modality == 'cross_fusion':
-            torch.save({'epoch': epoch,
-                        'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict()},
-                       config['Log']['logdir_fusion']+f"checkpoint_{epoch}.pth")
-    else:
-        if sensor_modality == 'rgb':
-            torch.save({'epoch': epoch,
-                        'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict()},
-                       config['Log']['logdir_rgb']+'progress_save/'+f"checkpoint_{epoch}.pth")
-        elif sensor_modality == 'lidar':
-            torch.save({'epoch': epoch,
-                        'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict()},
-                       config['Log']['logdir_lidar'] + 'progress_save/' + f"checkpoint_{epoch}.pth")
-        elif sensor_modality == 'cross_fusion':
-            torch.save({'epoch': epoch,
-                        'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict()},
-                       config['Log']['logdir_fusion'] + 'progress_save/' + f"checkpoint_{epoch}.pth")
-
+    torch.save({
+        'epoch': epoch,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict()},
+        config['Log']['logdir']+'progress_save/'+f"checkpoint_{epoch}.pth"
+    )
 
 def adjust_learning_rate_clft(config, optimizer, epoch):
     """Decay the learning rate based on schedule"""
