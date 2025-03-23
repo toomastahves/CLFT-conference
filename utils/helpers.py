@@ -5,7 +5,7 @@ import cv2
 import json
 import torch
 import numpy as np
-
+import glob
 
 with open('config.json') as f:
     config = json.load(f)
@@ -151,6 +151,16 @@ def adjust_learning_rate_clfcn(config, optimizer, epoch):
 
     return lr
 
+def get_model_path(config):
+    model_path = config['General']['model_path']
+    if model_path != '':
+        return config['General']['model_path']
+    # If model path not specified then take latest checkpoint
+    files = glob.glob(config['Log']['logdir']+'progress_save/*.pth')
+    if len(files) == 0:
+        return False
+    latest_file = max(files, key=os.path.getctime)
+    return latest_file
 
 class EarlyStopping(object):
     def __init__(self, config):
