@@ -26,25 +26,12 @@ label_colors_list = [
 
 
 def creat_dir(config):
-    logdir_rgb = config['Log']['logdir']
-    logdir_lidar = config['Log']['logdir']
-    logdir_fusion = config['Log']['logdir']
-    if not os.path.exists(logdir_rgb):
-        os.makedirs(logdir_rgb)
-        print(f'Making log directory {logdir_rgb}...')
-    if not os.path.exists(logdir_lidar):
-        os.makedirs(logdir_lidar)
-        print(f'Making log directory {logdir_lidar}...')
-    if not os.path.exists(logdir_fusion):
-        os.makedirs(logdir_fusion)
-        print(f'Making log directory {logdir_fusion}...')
-
-    if not os.path.exists(logdir_rgb + 'progress_save'):
-        os.makedirs(logdir_rgb + 'progress_save')
-    if not os.path.exists(logdir_lidar + 'progress_save'):
-        os.makedirs(logdir_lidar + 'progress_save')
-    if not os.path.exists(logdir_fusion + 'progress_save'):
-        os.makedirs(logdir_fusion + 'progress_save')
+    logdir = config['Log']['logdir']
+    if not os.path.exists(logdir):
+        os.makedirs(logdir)
+        print(f'Making log directory {logdir}...')
+    if not os.path.exists(logdir + 'progress_save'):
+        os.makedirs(logdir + 'progress_save')
 
 
 def waymo_anno_class_relabel_large_scale(annotation):

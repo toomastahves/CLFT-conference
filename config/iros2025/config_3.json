@@ -7,7 +7,7 @@
     "General":{
         "device":"cuda:0",
         "epochs":100,
-        "batch_size":24,
+        "batch_size":20,
         "path_predicted_images":"output",
         "seed":0,
         "model_specialization": "all",
@@ -19,7 +19,7 @@
         "model_path": ""
     },
     "Log": {
-        "logdir": "/gpfs/mariana/smbhome/totahv/iros2025/config_1/"
+        "logdir": "/gpfs/mariana/smbhome/totahv/iros2025/config_3/"
     },
     "CLFT": {
         "clft_lr": 8e-5,
