@@ -160,6 +160,7 @@ def get_model_path(config):
     if len(files) == 0:
         return False
     latest_file = max(files, key=os.path.getctime)
+    print(f'Opening latest file: {latest_file}')
     return latest_file
 
 class EarlyStopping(object):
