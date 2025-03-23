@@ -84,8 +84,10 @@ class Trainer(object):
                 print('Loading trained model weights...')
                 self.model.load_state_dict(checkpoint['model_state_dict'])
                 print('Loading trained optimizer...')
-                self.optimizer_clft.load_state_dict(checkpoint['optimizer_state_dict'])
-                self.optimizer_clfcn.load_state_dict(checkpoint['optimizer_state_dict'])
+                if backbone == 'clft':
+                    self.optimizer_clft.load_state_dict(checkpoint['optimizer_state_dict'])
+                if backbone == 'clfcn':
+                    self.optimizer_clfcn.load_state_dict(checkpoint['optimizer_state_dict'])
 
         else:
             print('Training from the beginning')
