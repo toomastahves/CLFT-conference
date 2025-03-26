@@ -6,6 +6,7 @@ import torch
 import numpy as np
 from tqdm import tqdm
 
+from utils.helpers import get_model_path
 import utils.metrics as metrics
 from clfcn.fusion_net import FusionNet
 from clft.clft import CLFT
@@ -34,7 +35,7 @@ class Tester(object):
         if self.backbone == 'clfcn':
             self.model = FusionNet()
             print(f'Using backbone {self.backbone}')
-            model_path = config['General']['model_path']
+            model_path = get_model_path(config)
             self.model.load_state_dict(torch.load(model_path, map_location=self.device)['model_state_dict'])
 
         elif self.backbone == 'clft':
@@ -50,7 +51,7 @@ class Tester(object):
                               model_timm=config['CLFT']['model_timm'],)
             print(f'Using backbone {self.backbone}')
 
-            model_path = config['General']['model_path']
+            model_path = get_model_path(config)
             self.model.load_state_dict(torch.load(model_path, map_location=self.device)['model_state_dict'])
 
         else:
