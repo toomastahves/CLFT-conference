@@ -6,16 +6,19 @@ import torch
 import numpy as np
 from tqdm import tqdm
 
+from utils.helpers import get_model_path
 import utils.metrics as metrics
 from clfcn.fusion_net import FusionNet
 from clft.clft import CLFT
 
 
 class Tester(object):
-    def __init__(self, config, args):
+    def __init__(self, config):
         super().__init__()
         self.config = config
-        self.args = args
+        self.backbone = config['CLI']['backbone']
+        self.mode = config['CLI']['mode']
+        self.path = config['CLI']['path']
 
         self.device = torch.device(self.config['General']['device'] if torch.cuda.is_available() else "cpu")
         print("device: %s" % self.device)
@@ -29,13 +32,13 @@ class Tester(object):
         else:
             sys.exit("A specialization must be specified! (large or small or all)")
 
-        if args.backbone == 'clfcn':
+        if self.backbone == 'clfcn':
             self.model = FusionNet()
-            print(f'Using backbone {args.backbone}')
-            model_path = config['General']['model_path']
+            print(f'Using backbone {self.backbone}')
+            model_path = get_model_path(config)
             self.model.load_state_dict(torch.load(model_path, map_location=self.device)['model_state_dict'])
 
-        elif args.backbone == 'clft':
+        elif self.backbone == 'clft':
             resize = config['Dataset']['transforms']['resize']
             self.model = CLFT(RGB_tensor_size=(3, resize, resize),
                               XYZ_tensor_size=(3, resize, resize),
@@ -46,9 +49,9 @@ class Tester(object):
                               reassemble_s=config['CLFT']['reassembles'],
                               nclasses=self.nclasses,
                               model_timm=config['CLFT']['model_timm'],)
-            print(f'Using backbone {args.backbone}')
+            print(f'Using backbone {self.backbone}')
 
-            model_path = config['General']['model_path']
+            model_path = get_model_path(config)
             self.model.load_state_dict(torch.load(model_path, map_location=self.device)['model_state_dict'])
 
         else:
@@ -57,7 +60,7 @@ class Tester(object):
         self.model.to(self.device)
         self.model.eval()
 
-    def test_clft(self, test_dataloader, modal):
+    def test_clft(self, test_dataloader, modal, result_file):
         print('CLFT Model Testing...')
         overlap_cum, pred_cum, label_cum, union_cum = 0, 0, 0, 0
         modality = modal
@@ -105,15 +108,16 @@ class Tester(object):
             cum_recall = overlap_cum / label_cum
             print('-----------------------------------------')
             print(f'Testing result of {self.config["General"]["model_specialization"]} scale model,'
-                  f'the modality is {self.args.mode}'
-                  f'the subset is {self.args.path}')
+                  f'the modality is {self.mode}'
+                  f'the subset is {self.path}')
             print(f'CUM_IoU->{cum_IoU.cpu().numpy()} '
                   f'CUM_Precision->{cum_precision.cpu().numpy()} '
                   f'CUM_Recall->{cum_recall.cpu().numpy()}')
             print('-----------------------------------------')
             print('Testing of the subset completed')
+            self.save_test_results(cum_IoU, cum_precision, cum_recall, result_file)
 
-    def test_clfcn(self, test_dataloader, modal):
+    def test_clfcn(self, test_dataloader, modal, result_file):
         print('CLFCN Model Testing...')
         overlap_cum, pred_cum, label_cum, union_cum = 0, 0, 0, 0
         modality = modal
@@ -161,10 +165,18 @@ class Tester(object):
 
             print('-----------------------------------------')
             print(f'Testing result of {self.config["General"]["model_specialization"]} scale model,'
-                  f'the modality is {self.args.mode}'
-                  f'the subset is {self.args.path}')
+                  f'the modality is {self.mode}'
+                  f'the subset is {self.path}')
             print(f'CUM_IoU->{cum_IoU.cpu().numpy()} '
                   f'CUM_Precision->{cum_precision.cpu().numpy()} '
                   f'CUM_Recall->{cum_recall.cpu().numpy()}')
             print('-----------------------------------------')
             print('Testing of the subset completed')
+            self.save_test_results(cum_IoU, cum_precision, cum_recall, result_file)
+
+    def save_test_results(self, cum_IoU, cum_precision, cum_recall, result_file):
+        with open(result_file, 'a') as file:
+            file.write('type,cum_IoU,cum_precision,cum_recall,average_precision\n')
+            file.write(f'CUM_IoU->{cum_IoU.cpu().numpy()} \n')
+            file.write(f'CUM_Precision->{cum_precision.cpu().numpy()} \n')
+            file.write(f'CUM_Recall->{cum_recall.cpu().numpy()} \n')

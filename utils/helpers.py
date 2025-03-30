@@ -5,7 +5,7 @@ import cv2
 import json
 import torch
 import numpy as np
-
+import glob
 
 with open('config.json') as f:
     config = json.load(f)
@@ -26,25 +26,12 @@ label_colors_list = [
 
 
 def creat_dir(config):
-    logdir_rgb = config['Log']['logdir_rgb']
-    logdir_lidar = config['Log']['logdir_lidar']
-    logdir_fusion = config['Log']['logdir_fusion']
-    if not os.path.exists(logdir_rgb):
-        os.makedirs(logdir_rgb)
-        print(f'Making log directory {logdir_rgb}...')
-    if not os.path.exists(logdir_lidar):
-        os.makedirs(logdir_lidar)
-        print(f'Making log directory {logdir_lidar}...')
-    if not os.path.exists(logdir_fusion):
-        os.makedirs(logdir_fusion)
-        print(f'Making log directory {logdir_fusion}...')
-
-    if not os.path.exists(logdir_rgb + 'progress_save'):
-        os.makedirs(logdir_rgb + 'progress_save')
-    if not os.path.exists(logdir_lidar + 'progress_save'):
-        os.makedirs(logdir_lidar + 'progress_save')
-    if not os.path.exists(logdir_fusion + 'progress_save'):
-        os.makedirs(logdir_fusion + 'progress_save')
+    logdir = config['Log']['logdir']
+    if not os.path.exists(logdir):
+        os.makedirs(logdir)
+        print(f'Making log directory {logdir}...')
+    if not os.path.exists(logdir + 'progress_save'):
+        os.makedirs(logdir + 'progress_save')
 
 
 def waymo_anno_class_relabel_large_scale(annotation):
@@ -134,35 +121,13 @@ def image_overlay(image, segmented_image):
 
 
 def save_model_dict(config, epoch, model, modality, optimizer, save_check=False):
-    sensor_modality = modality
     creat_dir(config)
-    if save_check is False:
-        if sensor_modality == 'rgb':
-            torch.save({'epoch': epoch,
-                        'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict()},
-                       config['Log']['logdir_rgb']+f"checkpoint_{epoch}.pth")
-        elif sensor_modality == 'lidar':
-            torch.save({'epoch': epoch,
-                        'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict()},
-                       config['Log']['logdir_lidar']+f"checkpoint_{epoch}.pth")
-        elif sensor_modality == 'cross_fusion':
-            torch.save({'epoch': epoch,
-                        'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict()},
-                       config['Log']['logdir_fusion']+f"checkpoint_{epoch}.pth")
-    else:
-        if sensor_modality == 'rgb':
-            torch.save({'epoch': epoch,
-                        'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict()},
-                       config['Log']['logdir_rgb']+'progress_save/'+f"checkpoint_{epoch}.pth")
-        elif sensor_modality == 'lidar':
-            torch.save({'epoch': epoch,
-                        'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict()},
-                       config['Log']['logdir_lidar'] + 'progress_save/' + f"checkpoint_{epoch}.pth")
-        elif sensor_modality == 'cross_fusion':
-            torch.save({'epoch': epoch,
-                        'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict()},
-                       config['Log']['logdir_fusion'] + 'progress_save/' + f"checkpoint_{epoch}.pth")
-
+    torch.save({
+        'epoch': epoch,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict()},
+        config['Log']['logdir']+'progress_save/'+f"checkpoint_{epoch}.pth"
+    )
 
 def adjust_learning_rate_clft(config, optimizer, epoch):
     """Decay the learning rate based on schedule"""
@@ -186,6 +151,17 @@ def adjust_learning_rate_clfcn(config, optimizer, epoch):
 
     return lr
 
+def get_model_path(config):
+    model_path = config['General']['model_path']
+    if model_path != '':
+        return config['General']['model_path']
+    # If model path not specified then take latest checkpoint
+    files = glob.glob(config['Log']['logdir']+'progress_save/*.pth')
+    if len(files) == 0:
+        return False
+    latest_file = max(files, key=os.path.getctime)
+    print(f'Opening latest file: {latest_file}')
+    return latest_file
 
 class EarlyStopping(object):
     def __init__(self, config):
