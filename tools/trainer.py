@@ -64,7 +64,7 @@ class Trainer(object):
             sys.exit("A backbone must be specified! (clft or clfcn)")
         self.model.to(self.device)
 
-        if self.config['General']['resume_training'] is True and not self.config['General'].get('resume_training_model_path', ''):
+        if self.config['General']['resume_training'] is True:
             print('Resume training...')
             model_path = get_model_path(config)
             checkpoint = torch.load(model_path, map_location=self.device)
