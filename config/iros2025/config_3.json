@@ -53,8 +53,8 @@
         "class_all_scale": ["background", "vehicle", "pedestrian", "sign", "cyclist"],
         "class_small_scale": ["background", "cyclist", "sign"],
         "class_large_scale": ["background", "vehicle", "pedestrian"],
-        "class_weight_all_scale": [0.2, 4.0, 67.0, 155.0, 1170.0],
-        "class_weight_small_scale": [0.3, 1959.0, 261.0],
-        "class_weight_large_scale": [0.34, 8.11, 117.0]
+        "class_weight_all_scale": [1, 4, 10, 15, 20],
+        "class_weight_small_scale": [1, 15, 20],
+        "class_weight_large_scale": [1, 4, 10]
     }
 }
