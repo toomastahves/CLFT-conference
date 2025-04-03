@@ -195,12 +195,18 @@ class Tester(object):
 
                 if spec == 'large':
                     file.write(f'large, {classes_large[1]},{classes_large[2]} \n')
-                    file.write(f'IoU,{iou[0]},{iou[1]} \n')
+                    file.write(f'IoU,{round(iou[0], 2)},{round(iou[1], 2)} \n')
+                    file.write(f'Precision,{round(precision[0], 2)},{round(precision[1], 2)} \n')
+                    file.write(f'Recall,{round(recall[0], 2)},{round(recall[1], 2)} \n')
                 if spec == 'small':
-                    file.write(f'small,{classes_small[1]},{classes_small[2]} \n')
-                    file.write(f'IoU,{iou[0]},{iou[1]} \n')
+                    file.write(f'small, {classes_small[1]},{classes_small[2]} \n')
+                    file.write(f'IoU,{round(iou[0], 2)},{round(iou[1], 2)} \n')
+                    file.write(f'Precision,{round(precision[0], 2)},{round(precision[1], 2)} \n')
+                    file.write(f'Recall,{round(recall[0], 2)},{round(recall[1], 2)} \n')
                 if spec == 'all':
-                    file.write(f'all,{classes_all[1]},{classes_all[2]},{classes_all[3]},{classes_all[4]} \n')
-                    file.write(f'IoU,{iou[0]},{iou[1]},{iou[2]},{iou[3]} \n')
+                    file.write(f'all, {classes_all[1]},{classes_all[2]},{classes_all[3]},{classes_all[4]} \n')
+                    file.write(f'IoU,{round(iou[0], 2)},{round(iou[1], 2)},{round(iou[2], 2)},{round(iou[3], 2)} \n')
+                    file.write(f'Precision,{round(precision[0], 2)},{round(precision[1], 2)},{round(precision[2], 2)},{round(precision[3], 2)} \n')
+                    file.write(f'Recall,{round(recall[0], 2)},{round(recall[1], 2)},{round(recall[2], 2)},{round(recall[3], 2)} \n')
         except IOError as e:
             print(f"Error writing to file {result_file}: {e}")
