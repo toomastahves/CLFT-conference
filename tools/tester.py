@@ -19,7 +19,7 @@ class Tester(object):
         self.backbone = config['CLI']['backbone']
         self.mode = config['CLI']['mode']
         self.path = config['CLI']['path']
-        self.result_file = config['CLI']['result_file']
+        self.result_file = config['Log']['result_file']
 
         self.device = torch.device(self.config['General']['device'] if torch.cuda.is_available() else "cpu")
         print("device: %s" % self.device)
