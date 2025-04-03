@@ -176,7 +176,7 @@ class Tester(object):
             self.save_test_results(cum_IoU, cum_precision, cum_recall, self.config, weather)
 
     def save_test_results(self, cum_IoU, cum_precision, cum_recall, config, weather):
-        result_file = config['CLI']['result_file']
+        result_file = config['Log']['result_file']
         backbone = config['CLI']['backbone']
         mode = config['CLI']['mode']
         spec = config['General']['model_specialization']
