@@ -45,10 +45,8 @@ for file in test_data_files:
                                 pin_memory=True,
                                 drop_last=True)
 
-    result_file = config['Log']['logdir'] + 'result_' + file
-
     if backbone == 'clft':
-        tester.test_clft(test_dataloader, config['CLI']['mode'], result_file)
+        tester.test_clft(test_dataloader, file)
     elif backbone == 'clfcn':
-        tester.test_clfcn(test_dataloader, config['CLI']['mode'], result_file)
+        tester.test_clfcn(test_dataloader, file)
     print('Testing is completed')

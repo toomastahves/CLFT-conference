@@ -19,7 +19,8 @@
         "model_path": ""
     },
     "Log": {
-        "logdir": "/gpfs/mariana/smbhome/totahv/iros2025/config_2/"
+        "logdir": "/gpfs/mariana/smbhome/totahv/iros2025/config_2/",
+        "result_file": "/gpfs/mariana/smbhome/totahv/iros2025/config_2/results.csv"
     },
     "CLFT": {
         "clft_lr": 8e-5,
