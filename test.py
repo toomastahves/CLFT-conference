@@ -64,13 +64,17 @@ if test_mode == '':
 if test_mode == 'all':
     print('Testing all models in the folder')
     models = get_all_models(config)
-
-    for path in models:
+    test_data_path = config['CLI']['path']
+    
+    for model_path in models:
+        tester = Tester(config, model_path)
+        
         for file in test_data_files:
-            print(f"Testing with the path {path}")
-            result_file_path = config['Log']['logdir'] + '/results/' + path.split('/')[-1] + '.csv'
+            data_file_path = test_data_path + file
+            print(f"Testing model {model_path} with data file {data_file_path}")
+            result_file_path = config['Log']['logdir'] + '/results/' + model_path.split('/')[-1] + '_' + file + '.csv'
 
-            test_data = Dataset(config, 'test', path)
+            test_data = Dataset(config, 'test', data_file_path)
 
             test_dataloader = DataLoader(test_data,
                                         batch_size=config['General']['batch_size'],
