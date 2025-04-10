@@ -4,6 +4,7 @@ import sys
 import json
 import argparse
 import numpy as np
+import os
 from torch.utils.data import DataLoader
 
 from utils.helpers import get_model_path, get_all_models
@@ -11,6 +12,11 @@ from utils.helpers import get_model_path, get_all_models
 from tools.tester import Tester
 from tools.dataset import Dataset
 
+# Create results directory if it doesn't exist
+def ensure_results_directory(results_path):
+    if not os.path.exists(results_path):
+        os.makedirs(results_path)
+        print(f"Created results directory: {results_path}")
 
 parser = argparse.ArgumentParser(description='CLFT Testing')
 parser.add_argument('-c', '--config', type=str, required=False, help='The path of the config file')
@@ -45,7 +51,9 @@ if test_mode == '':
     for file in test_data_files:
         path = test_data_path + file
         print(f"Testing with the path {path}")
-        result_file_path = config['Log']['logdir'] + '/results/' + path.split('/')[-1] + '.csv'
+        result_file_path = config['Log']['logdir'] + 'results/' + path.split('/')[-1] + '.csv'
+
+        ensure_results_directory(config['Log']['logdir'] + 'results/')
 
         test_data = Dataset(config, 'test', path)
 
@@ -73,6 +81,8 @@ if test_mode == 'all':
             data_file_path = test_data_path + file
             print(f"Testing model {model_path} with data file {data_file_path}")
             result_file_path = config['Log']['logdir'] + '/results/' + model_path.split('/')[-1] + '_' + file + '.csv'
+
+            ensure_results_directory(config['Log']['logdir'] + '/results/')
 
             test_data = Dataset(config, 'test', data_file_path)
 
