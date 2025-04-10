@@ -29,20 +29,23 @@ np.random.seed(config['General']['seed'])
 
 test_mode = config['Test']['mode']
 
+test_data_files = [
+    'test_day_fair.txt',
+    'test_night_fair.txt',
+    'test_day_rain.txt',
+    'test_night_rain.txt'
+]
+
 if test_mode == '':
+    print('Testing single model')
     model_path = get_model_path(config)
     tester = Tester(config, model_path)
 
     test_data_path = config['CLI']['path']
-    test_data_files = [
-        'test_day_fair.txt',
-        'test_night_fair.txt',
-        'test_day_rain.txt',
-        'test_night_rain.txt'
-    ]
     for file in test_data_files:
         path = test_data_path + file
         print(f"Testing with the path {path}")
+        result_file_path = config['Log']['logdir'] + '/results/' + path.split('/')[-1] + '.csv'
 
         test_data = Dataset(config, 'test', path)
 
@@ -53,13 +56,31 @@ if test_mode == '':
                                     drop_last=True)
 
         if backbone == 'clft':
-            tester.test_clft(test_dataloader, file)
+            tester.test_clft(test_dataloader, file, result_file_path)
         elif backbone == 'clfcn':
-            tester.test_clfcn(test_dataloader, file)
+            tester.test_clfcn(test_dataloader, file, result_file_path)
         print('Testing is completed')
 
 if test_mode == 'all':
     print('Testing all models in the folder')
     models = get_all_models(config)
-    print(models)
 
+    for path in models:
+        for file in test_data_files:
+            print(f"Testing with the path {path}")
+            result_file_path = config['Log']['logdir'] + '/results/' + path.split('/')[-1] + '.csv'
+
+            test_data = Dataset(config, 'test', path)
+
+            test_dataloader = DataLoader(test_data,
+                                        batch_size=config['General']['batch_size'],
+                                        shuffle=False,
+                                        pin_memory=True,
+                                        drop_last=True)
+
+            if backbone == 'clft':
+                tester.test_clft(test_dataloader, file, result_file_path)
+            elif backbone == 'clfcn':
+                tester.test_clfcn(test_dataloader, file, result_file_path)
+
+    print('Testing is completed')

@@ -18,7 +18,6 @@ class Tester(object):
         self.backbone = config['CLI']['backbone']
         self.mode = config['CLI']['mode']
         self.path = config['CLI']['path']
-        self.result_file = config['Log']['result_file']
         self.model_path = model_path
 
         self.device = torch.device(self.config['General']['device'] if torch.cuda.is_available() else "cpu")
@@ -58,7 +57,7 @@ class Tester(object):
         self.model.to(self.device)
         self.model.eval()
 
-    def test_clft(self, test_dataloader, weather):
+    def test_clft(self, test_dataloader, weather, result_file_path):
         print('CLFT Model Testing...')
 
         overlap_cum, pred_cum, label_cum, union_cum = 0, 0, 0, 0
@@ -113,9 +112,9 @@ class Tester(object):
                   f'CUM_Recall->{cum_recall.cpu().numpy()}')
             print('-----------------------------------------')
             print('Testing of the subset completed')
-            self.save_test_results(cum_IoU, cum_precision, cum_recall, self.config, weather)
+            self.save_test_results(cum_IoU, cum_precision, cum_recall, self.config, weather, result_file_path)
 
-    def test_clfcn(self, test_dataloader, weather):
+    def test_clfcn(self, test_dataloader, weather, result_file_path):
         print('CLFCN Model Testing...')
 
         overlap_cum, pred_cum, label_cum, union_cum = 0, 0, 0, 0
@@ -170,10 +169,9 @@ class Tester(object):
                   f'CUM_Recall->{cum_recall.cpu().numpy()}')
             print('-----------------------------------------')
             print('Testing of the subset completed')
-            self.save_test_results(cum_IoU, cum_precision, cum_recall, self.config, weather)
+            self.save_test_results(cum_IoU, cum_precision, cum_recall, self.config, weather, result_file_path)
 
-    def save_test_results(self, cum_IoU, cum_precision, cum_recall, config, weather):
-        result_file = config['Log']['result_file']
+    def save_test_results(self, cum_IoU, cum_precision, cum_recall, config, weather, result_file_path):
         backbone = config['CLI']['backbone']
         mode = config['CLI']['mode']
         spec = config['General']['model_specialization']
@@ -183,7 +181,7 @@ class Tester(object):
         classes_large = config['Dataset']['class_large_scale']
 
         try:
-            with open(result_file, 'a') as file:
+            with open(result_file_path, 'a') as file:
                 file.write(f'{weather}, {mode}, {backbone} \n')
 
                 iou = cum_IoU.cpu().numpy()
@@ -206,4 +204,4 @@ class Tester(object):
                     file.write(f'Precision,{round(precision[0], 2)},{round(precision[1], 2)},{round(precision[2], 2)},{round(precision[3], 2)} \n')
                     file.write(f'Recall,{round(recall[0], 2)},{round(recall[1], 2)},{round(recall[2], 2)},{round(recall[3], 2)} \n')
         except IOError as e:
-            print(f"Error writing to file {result_file}: {e}")
+            print(f"Error writing to file {result_file_path}: {e}")

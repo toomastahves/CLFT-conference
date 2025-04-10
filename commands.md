@@ -13,4 +13,4 @@ chmod +x test.sh
 sbatch -J test-1 test.slurm ./config/iros2025/config_1.json
 sbatch -J test-2 test.slurm ./config/iros2025/config_2.json
 sbatch -J test-3 test.slurm ./config/iros2025/config_3.json
-python3 test.py --config ./config/iros2025/config_2.json
+python3 test.py --config ./config/iros2025/config_1.json
