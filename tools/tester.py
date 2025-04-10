@@ -5,6 +5,8 @@ import sys
 import torch
 import numpy as np
 from tqdm import tqdm
+import json
+import os
 
 import utils.metrics as metrics
 from clfcn.fusion_net import FusionNet
@@ -181,27 +183,105 @@ class Tester(object):
         classes_large = config['Dataset']['class_large_scale']
 
         try:
-            with open(result_file_path, 'a') as file:
-                file.write(f'{weather}, {mode}, {backbone} \n')
-
-                iou = cum_IoU.cpu().numpy()
-                precision = cum_precision.cpu().numpy()
-                recall = cum_recall.cpu().numpy()
-
-                if spec == 'large':
-                    file.write(f'large, {classes_large[1]},{classes_large[2]} \n')
-                    file.write(f'IoU,{round(iou[0], 2)},{round(iou[1], 2)} \n')
-                    file.write(f'Precision,{round(precision[0], 2)},{round(precision[1], 2)} \n')
-                    file.write(f'Recall,{round(recall[0], 2)},{round(recall[1], 2)} \n')
-                if spec == 'small':
-                    file.write(f'small, {classes_small[1]},{classes_small[2]} \n')
-                    file.write(f'IoU,{round(iou[0], 2)},{round(iou[1], 2)} \n')
-                    file.write(f'Precision,{round(precision[0], 2)},{round(precision[1], 2)} \n')
-                    file.write(f'Recall,{round(recall[0], 2)},{round(recall[1], 2)} \n')
-                if spec == 'all':
-                    file.write(f'all, {classes_all[1]},{classes_all[2]},{classes_all[3]},{classes_all[4]} \n')
-                    file.write(f'IoU,{round(iou[0], 2)},{round(iou[1], 2)},{round(iou[2], 2)},{round(iou[3], 2)} \n')
-                    file.write(f'Precision,{round(precision[0], 2)},{round(precision[1], 2)},{round(precision[2], 2)},{round(precision[3], 2)} \n')
-                    file.write(f'Recall,{round(recall[0], 2)},{round(recall[1], 2)},{round(recall[2], 2)},{round(recall[3], 2)} \n')
+            # Convert tensors to numpy arrays
+            iou = cum_IoU.cpu().numpy()
+            precision = cum_precision.cpu().numpy()
+            recall = cum_recall.cpu().numpy()
+            
+            result = {
+                "metadata": {
+                    "result_file_path": result_file_path,
+                    "weather": weather,
+                    "mode": mode,
+                    "backbone": backbone,
+                    "specialization": spec
+                },
+                "classes": [],
+                "metrics": []
+            }
+            
+            if spec == 'large':
+                classes = classes_large
+            elif spec == 'small':
+                classes = classes_small
+            elif spec == 'all':
+                classes = classes_all
+            else:
+                classes = []
+                print(f"Unknown specialization: {spec}")
+            
+            # Add classes list
+            result["classes"] = classes
+            
+            if spec == 'large':
+                result["metrics"].append({
+                    "class": classes_large[1],
+                    "IoU": round(float(iou[0]), 2),
+                    "Precision": round(float(precision[0]), 2),
+                    "Recall": round(float(recall[0]), 2)
+                })
+                result["metrics"].append({
+                    "class": classes_large[2],
+                    "IoU": round(float(iou[1]), 2),
+                    "Precision": round(float(precision[1]), 2),
+                    "Recall": round(float(recall[1]), 2)
+                })
+            if spec == 'small':
+                result["metrics"].append({
+                    "class": classes_small[1],
+                    "IoU": round(float(iou[0]), 2),
+                    "Precision": round(float(precision[0]), 2),
+                    "Recall": round(float(recall[0]), 2)
+                })
+                result["metrics"].append({
+                    "class": classes_small[2],
+                    "IoU": round(float(iou[1]), 2),
+                    "Precision": round(float(precision[1]), 2),
+                    "Recall": round(float(recall[1]), 2)
+                })
+            if spec == 'all':
+                result["metrics"].append({
+                    "class": classes_all[1],
+                    "IoU": round(float(iou[0]), 2),
+                    "Precision": round(float(precision[0]), 2),
+                    "Recall": round(float(recall[0]), 2)
+                })
+                result["metrics"].append({
+                    "class": classes_all[2],
+                    "IoU": round(float(iou[1]), 2),
+                    "Precision": round(float(precision[1]), 2),
+                    "Recall": round(float(recall[1]), 2)
+                })
+                result["metrics"].append({
+                    "class": classes_all[3],
+                    "IoU": round(float(iou[2]), 2),
+                    "Precision": round(float(precision[2]), 2),
+                    "Recall": round(float(recall[2]), 2)
+                })
+            # Check if file exists to handle appending
+            if os.path.exists(result_file_path):
+                # Read existing data
+                with open(result_file_path, 'r') as file:
+                    try:
+                        data = json.load(file)
+                        if not isinstance(data, list):
+                            data = [data]  # Convert to list if not already
+                    except json.JSONDecodeError:
+                        # If file exists but isn't valid JSON, start fresh
+                        data = []
+            else:
+                data = []
+            
+            # Append new result
+            data.append(result)
+            
+            # Write updated data with proper formatting
+            with open(result_file_path, 'w') as file:
+                json.dump(data, file, indent=2)
+                
         except IOError as e:
             print(f"Error writing to file {result_file_path}: {e}")
+        except Exception as e:
+            print(f"Error processing results: {e}")
+            import traceback
+            traceback.print_exc()

@@ -46,14 +46,16 @@ if test_mode == '':
     print('Testing single model')
     model_path = get_model_path(config)
     tester = Tester(config, model_path)
+    
+    # Create a single results file for this model
+    model_name = model_path.split('/')[-1]
+    result_file_path = config['Log']['logdir'] + '/results/' + model_name + '.json'
+    ensure_results_directory(config['Log']['logdir'] + '/results/')
 
     test_data_path = config['CLI']['path']
     for file in test_data_files:
         path = test_data_path + file
         print(f"Testing with the path {path}")
-        result_file_path = config['Log']['logdir'] + 'results/' + path.split('/')[-1] + '.csv'
-
-        ensure_results_directory(config['Log']['logdir'] + 'results/')
 
         test_data = Dataset(config, 'test', path)
 
@@ -67,7 +69,8 @@ if test_mode == '':
             tester.test_clft(test_dataloader, file, result_file_path)
         elif backbone == 'clfcn':
             tester.test_clfcn(test_dataloader, file, result_file_path)
-        print('Testing is completed')
+    
+    print('Testing is completed')
 
 if test_mode == 'all':
     print('Testing all models in the folder')
@@ -77,12 +80,14 @@ if test_mode == 'all':
     for model_path in models:
         tester = Tester(config, model_path)
         
+        # Create a single results file for this model
+        model_name = model_path.split('/')[-1]
+        result_file_path = config['Log']['logdir'] + '/results/' + model_name + '.json'
+        ensure_results_directory(config['Log']['logdir'] + '/results/')
+        
         for file in test_data_files:
             data_file_path = test_data_path + file
             print(f"Testing model {model_path} with data file {data_file_path}")
-            result_file_path = config['Log']['logdir'] + '/results/' + model_path.split('/')[-1] + '_' + file + '.csv'
-
-            ensure_results_directory(config['Log']['logdir'] + '/results/')
 
             test_data = Dataset(config, 'test', data_file_path)
 
