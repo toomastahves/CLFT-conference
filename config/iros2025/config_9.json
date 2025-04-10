@@ -18,6 +18,9 @@
         "save_epoch": 5,
         "model_path": ""
     },
+    "Test": {
+        "mode": "all"
+    },
     "Log": {
         "logdir": "/gpfs/mariana/smbhome/totahv/iros2025/config_9/",
         "result_file": "/gpfs/mariana/smbhome/totahv/iros2025/config_9/results.csv"

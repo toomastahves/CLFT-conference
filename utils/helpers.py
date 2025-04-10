@@ -163,6 +163,9 @@ def get_model_path(config):
     print(f'Opening latest file: {latest_file}')
     return latest_file
 
+def get_all_models(config):
+    return glob.glob(config['Log']['logdir']+'progress_save/*.pth')
+
 class EarlyStopping(object):
     def __init__(self, config):
         self.patience = config['General']['early_stop_patience']
