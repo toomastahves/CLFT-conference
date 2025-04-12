@@ -4,7 +4,8 @@ import os
 import cv2
 import torch
 import numpy as np
-
+import glob
+import json
 
 label_colors_list = [
         (0, 0, 0),        # B
@@ -21,6 +22,17 @@ For example, `vehicle=0`, `human=1`, and so on.
 """
 class_values = [ALL_CLASSES.index(cls.lower()) for cls in ALL_CLASSES]
 
+def get_model_path(config):
+    model_path = config['General']['model_path']
+    if model_path != '':
+        return config['General']['model_path']
+    # If model path not specified then take latest checkpoint
+    files = glob.glob(config['Log']['logdir']+'progress_save/*.pth')
+    if len(files) == 0:
+        return False
+    latest_file = max(files, key=os.path.getctime)
+    print(f'Opening latest file: {latest_file}')
+    return latest_file
 
 def creat_dir(config):
     logdir_rgb = config['Log']['logdir_rgb']

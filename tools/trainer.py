@@ -16,7 +16,7 @@ from utils.helpers import EarlyStopping
 from utils.helpers import save_model_dict
 from utils.helpers import adjust_learning_rate_clft
 from utils.helpers import adjust_learning_rate_clfcn
-
+from utils.helpers import get_model_path
 
 writer = SummaryWriter()
 
@@ -68,7 +68,7 @@ class Trainer(object):
 
         if self.config['General']['resume_training'] is True:
             print('Resume training...')
-            model_path = self.config['General']['resume_training_model_path']
+            model_path = get_model_path(config)
             checkpoint = torch.load(model_path, map_location=self.device)
 
             if self.config['General']['reset_lr'] is True:
