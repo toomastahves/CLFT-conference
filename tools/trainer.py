@@ -182,7 +182,7 @@ class Trainer(object):
                 output_seg = output_seg.squeeze(1)
                 anno = batch['anno']
 
-                batch_overlap, batch_pred, batch_label, batch_union = find_overlap(self.nclasses, output_seg, anno)
+                batch_overlap, batch_pred, batch_label, batch_union = find_overlap_1(self.nclasses, output_seg, anno)
 
                 overlap_cum += batch_overlap
                 pred_cum += batch_pred
