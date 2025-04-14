@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=test-1
+#SBATCH --job-name=test
 #SBATCH -n 1
 #SBATCH -p gpu
 #SBATCH --gres=gpu:A100:1

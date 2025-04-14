@@ -123,7 +123,6 @@ def find_overlap_1(n_classes, output, anno):
 
     return area_overlap, area_pred, area_label, area_union
 
-
 def auc_ap(precision, recall):
     '''
     Calculating AUC AP as defined in PASCAL VOC 2010

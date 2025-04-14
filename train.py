@@ -1,30 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import json
-import sys
-import argparse
 import numpy as np
+import argparse
 
 from torch.utils.data import DataLoader
 
 from tools.trainer import Trainer
 from tools.dataset import Dataset
 
-parser = argparse.ArgumentParser(description='CLFT Training')
-parser.add_argument('-c', '--config', type=str, required=False, help='The path of the config file')
+parser = argparse.ArgumentParser(description='CLFT and CLFCN Training')
+parser.add_argument('-c', '--config', type=str, required=False, default='config.json', help='The path of the config file')
 args = parser.parse_args()
 config_file = args.config
-print("Config file path: ", args.config)
 
 with open(config_file, 'r') as f:
     config = json.load(f)
 
-print(config)
-backbone = config['CLI']['backbone']
-mode = config['CLI']['mode']
-
 np.random.seed(config['General']['seed'])
-trainer = Trainer(config, backbone)
+trainer = Trainer(config)
 
 train_data = Dataset(config, 'train', './waymo_dataset/splits_clft/train_all.txt')
 train_dataloader = DataLoader(train_data,
@@ -40,12 +34,4 @@ valid_dataloader = DataLoader(valid_data,
                               pin_memory=True,
                               drop_last=True)
 
-
-if backbone == 'clft':
-    trainer.train_clft(train_dataloader, valid_dataloader, modal=mode)
-
-elif backbone == 'clfcn':
-    trainer.train_clfcn(train_dataloader, valid_dataloader, modal=mode)
-
-else:
-    sys.exit("A backbone must be specified! (clft or clfcn)")
+trainer.train_clft(train_dataloader, valid_dataloader, modal=config['CLI']['mode'])

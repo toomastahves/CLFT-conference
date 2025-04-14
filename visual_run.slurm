@@ -10,4 +10,4 @@
 #SBATCH --mail-type=ALL
 
 ## run job    
-./train.sh $1
+./visual_run.sh $1

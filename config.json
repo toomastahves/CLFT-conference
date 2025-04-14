@@ -1,4 +1,10 @@
 {
+    "Summary": "Default configuration template",
+    "CLI": {
+        "backbone": "",
+        "mode": "",
+        "path": ""
+    },
     "General":{
         "device":"cuda:0",
         "epochs":400,
@@ -6,35 +12,34 @@
         "path_predicted_images":"output",
         "seed":0,
         "resume_training":false,
-        "resume_training_model_path": "/gpfs/mariana/smbhome/junygu/logs/17-11-2023/checkpoint_280.pth",
+        "resume_training_model_path": "/gpfs/mariana/smbhome/totahv/logs/config_x/checkpoint_x.pth",
 	    "reset_lr":false,
-        "early_stop_patience": 50,
+        "early_stop_patience": 200,
         "save_epoch": 20,
-        "model_path":"./model_path/clft/clft_base_fusion_checkpoint_313.pth"
+        "model_path": "/gpfs/mariana/smbhome/totahv/logs/config_x/checkpoint_x.pth"
     },
     "Log": {
-        "logdir_rgb": "/media/storage/claude/logs/",
-        "logdir_lidar": "/media/storage/claude/logs/",
-        "logdir_fusion": "/media/storage/claude/logs/29-09-2024/"
+        "logdir_rgb": "/gpfs/mariana/smbhome/totahv/logs/config_x/",
+        "logdir_lidar": "/gpfs/mariana/smbhome/totahv/logs/config_x/",
+        "logdir_fusion": "/gpfs/mariana/smbhome/totahv/logs/config_x/"
     },
     "CLFT": {
+        "emb_dim": 0,
+        "hooks": [],
+        "model_timm": "",
         "clft_lr": 8e-5,
         "patch_size":16,
-        "emb_dim": 768,
-        "hooks": [2, 5, 8, 11],
         "reassembles": [4, 8, 16, 32],
         "read": "projection",
         "resample_dim": 256,
         "type": "segmentation",
-        "model_timm": "vit_base_resnet50_384",
         "loss_depth": "ssi",
         "loss_segmentation": "ce",
         "lr_momentum": 0.99
     },
     "CLFCN": {
-        "clfcn_lr":0.00006,
-        "lr_coefficient": 0.9
-        },
+        "clfcn_lr":0.00006
+    },
     "Dataset":{
         "name": "waymo",
         "transforms":{
