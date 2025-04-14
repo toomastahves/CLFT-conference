@@ -153,10 +153,10 @@ class Trainer(object):
             writer.close()
 
             early_stop_index = round(valid_epoch_loss, 4)
-            early_stopping(early_stop_index, epoch, self.model, optimizer=self.optimizer_clft, modality=modality)
+            early_stopping(early_stop_index, epoch, self.model, self.optimizer_clft)
             if ((epoch + 1) % self.config['General']['save_epoch'] == 0 and epoch > 0):
                 print('Saving model for every N epochs...')
-                save_model_dict(self.config, epoch, self.model, self.optimizer_clft)
+                save_model_dict(self.config, epoch, self.model, optimizer=self.optimizer_clft)
                 print('Saving Model Complete')
             if early_stopping.early_stop_trigger is True:
                 break
