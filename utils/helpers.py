@@ -128,7 +128,7 @@ def image_overlay(image, segmented_image):
     return image
 
 
-def save_model_dict(config, epoch, model, modality, optimizer, save_check=False):
+def save_model_dict(config, epoch, modality, model, optimizer, save_check=False):
     sensor_modality = modality
     creat_dir(config)
     if save_check is False:
@@ -218,21 +218,22 @@ class EarlyStopping(object):
         self.early_stop_trigger = False
         self.count = 0
 
-    def __call__(self, valid_param, epoch, model, modality, optimizer):
+    def __call__(self, valid_param, epoch, modality, model, optimizer):
         if self.min_param is None:
             self.min_param = valid_param
-        elif valid_param <= self.min_param:
+        elif valid_param >= self.min_param:
             self.count += 1
             print(f'Early Stopping Counter: {self.count} of {self.patience}')
             if self.count >= self.patience:
                 self.early_stop_trigger = True
                 print('Saving model for last epoch...')
-                save_model_dict(self.config, epoch, model, modality, optimizer, True)
+                save_model_dict(self.config, epoch, modality, model, optimizer, True)
                 print('Saving Model Complete')
                 print('Early Stopping Triggered!')
         else:
-            print(f'Vehicle IoU increased from {self.min_param:.4f} ' + f'to {valid_param:.4f}')
+            print(f'Valid loss decreased from {self.min_param:.4f} ' +
+                  f'to {valid_param:.4f}')
             self.min_param = valid_param
-            save_model_dict(self.config, epoch, model, modality, optimizer)
+            save_model_dict(self.config, epoch, modality, model, optimizer)
             print('Saving Model...')
             self.count = 0

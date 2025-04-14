@@ -13,9 +13,9 @@
         "model_path":"./model_path/clft/clft_base_fusion_checkpoint_313.pth"
     },
     "Log": {
-        "logdir_rgb": "/gpfs/mariana/smbhome/junygu/logs/14-11-2023/",
-        "logdir_lidar": "/gpfs/mariana/smbhome/junygu/logs/lidar/",
-        "logdir_fusion": "/gpfs/mariana/smbhome/junygu/logs/17-11-2013/"
+        "logdir_rgb": "/media/storage/claude/logs/",
+        "logdir_lidar": "/media/storage/claude/logs/",
+        "logdir_fusion": "/media/storage/claude/logs/29-09-2024/"
     },
     "CLFT": {
         "clft_lr": 8e-5,
@@ -26,7 +26,7 @@
         "read": "projection",
         "resample_dim": 256,
         "type": "segmentation",
-        "model_timm": "vit_base_patch16_384",
+        "model_timm": "vit_base_resnet50_384",
         "loss_depth": "ssi",
         "loss_segmentation": "ce",
         "lr_momentum": 0.99

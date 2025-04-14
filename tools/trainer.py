@@ -118,18 +118,17 @@ class Trainer(object):
 
                 # 1xHxW -> HxW
                 output_seg = output_seg.squeeze(1)
+
                 anno = batch['anno']
 
-                batch_overlap, batch_pred, batch_label, batch_union = find_overlap(self.nclasses, output_seg, anno)
+                batch_overlap, batch_pred, batch_label, batch_union = find_overlap_1(self.nclasses, output_seg, anno)
+
                 overlap_cum += batch_overlap
                 pred_cum += batch_pred
                 label_cum += batch_label
                 union_cum += batch_union
 
                 loss = self.criterion(output_seg, batch['anno'])
-                # w_rgb = 1.1
-                # w_lid = 0.9
-                # loss = w_rgb*loss_rgb + w_lid*loss_lidar + loss_fusion
 
                 train_loss += loss.item()
                 loss.backward()
@@ -138,8 +137,9 @@ class Trainer(object):
 
             # The IoU of one epoch
             train_epoch_IoU = overlap_cum / union_cum
-            print(f'Training vehicles IoU for Epoch: {train_epoch_IoU[0]:.4f}')
-            print(f'Training human IoU for Epoch: {train_epoch_IoU[1]:.4f}')
+            print(f'Training Cyclist IoU for Epoch: {train_epoch_IoU[0]:.4f}')
+            print(f'Training Pedestrian IoU for Epoch: {train_epoch_IoU[1]:.4f}')
+            print(f'Training Sign IoU for Epoch: {train_epoch_IoU[2]:.4f}')
             # The loss_rgb of one epoch
             train_epoch_loss = train_loss / (i + 1)
             print(f'Average Training Loss for Epoch: {train_epoch_loss:.4f}')
@@ -156,11 +156,11 @@ class Trainer(object):
                                              'valid': valid_epoch_IoU[1]}, epoch)
             writer.close()
 
-            early_stop_index = round(valid_epoch_IoU[0].item(), 4)
-            early_stopping(early_stop_index, epoch, self.model, modality, self.optimizer_clft)
-            save_epoch = self.config['General']['save_epoch']
-            if (epoch + 1) % save_epoch == 0 and epoch > 0:
-                print(f'Saving model for every {save_epoch} epochs...')
+            early_stop_index = round(valid_epoch_loss, 4)
+            early_stopping(early_stop_index, epoch, modality, self.model, self.optimizer_clft)
+            if ((epoch + 1) % self.config['General']['save_epoch'] == 0 and
+                    epoch > 0):
+                print('Saving model for every 10 epochs...')
                 save_model_dict(self.config, epoch, self.model, modality, self.optimizer_clft, True)
                 print('Saving Model Complete')
             if early_stopping.early_stop_trigger is True:
@@ -197,10 +197,12 @@ class Trainer(object):
                 loss = self.criterion(output_seg, batch['anno'])
                 valid_loss += loss.item()
                 progress_bar.set_description(f'valid fusion loss: {loss:.4f}')
+
         # The IoU of one epoch
         valid_epoch_IoU = overlap_cum / union_cum
-        print(f'Validation vehicles IoU for Epoch: {valid_epoch_IoU[0]:.4f}')
-        print(f'Validation human IoU for Epoch: {valid_epoch_IoU[1]:.4f}')
+        print(f'Validation cyclist IoU for Epoch: {valid_epoch_IoU[0]:.4f}')
+        print(f'Validation pedestrian IoU for Epoch: {valid_epoch_IoU[1]:.4f}')
+        print(f'Validation sign IoU for Epoch: {valid_epoch_IoU[2]:.4f}')
         # The loss_rgb of one epoch
         valid_epoch_loss = valid_loss / (i + 1)
         print(f'Average Validation Loss for Epoch: {valid_epoch_loss:.4f}')
