@@ -43,16 +43,22 @@ class Tester(object):
                               type=config['CLFT']['type'],
                               model_timm=config['CLFT']['model_timm'], )
             print(f"Using backbone {config['CLI']['backbone']}")
-
-            model_path = get_model_path(config)
-            self.model.load_state_dict(torch.load(model_path, map_location=self.device)['model_state_dict'])
-
         else:
             sys.exit("A backbone must be specified! (clft or clfcn)")
 
         self.model.to(self.device)
         self.nclasses = len(config['Dataset']['classes'])
         self.model.eval()
+        
+    def load_checkpoint(self, checkpoint_path):
+        print(f"Loading checkpoint from {checkpoint_path}")
+        try:
+            checkpoint = torch.load(checkpoint_path, map_location=self.device)
+            self.model.load_state_dict(checkpoint['model_state_dict'])
+            print("Checkpoint loaded successfully")
+        except Exception as e:
+            print(f"Error loading checkpoint: {e}")
+            sys.exit(1)
 
     def test_clft(self, test_dataloader, modal, result_file):
         print('Testing...')
