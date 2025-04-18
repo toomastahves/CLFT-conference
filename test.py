@@ -60,6 +60,6 @@ for checkpoint_file in checkpoint_files:
                                     drop_last=True)
 
         # Include checkpoint name in the result file name
-        result_file = config['Log']['logdir'] + 'result_' + file.replace('.txt', '') + '_' + checkpoint_name + '.csv'
+        result_file = config['Log']['logdir'] + '/results/' + 'result_' + file.replace('.txt', '') + '_' + checkpoint_name + '.csv'
         tester.test_clft(test_dataloader, config['CLI']['mode'], result_file)
         print(f'Testing for {file} with {checkpoint_name} is completed')
