@@ -39,8 +39,11 @@ class Trainer(object):
         elif self.config['General']['model_specialization'] == 'all':
             self.nclasses = len(config['Dataset']['class_all_scale'])
             weight_loss = torch.tensor(self.config['Dataset']['class_weight_all_scale'])
+        elif self.config['General']['model_specialization'] == 'cross':
+            self.nclasses = len(config['Dataset']['class_cross_scale'])
+            weight_loss = torch.tensor(self.config['Dataset']['class_weight_cross_scale'])
         else:
-            sys.exit("A specialization must be specified! (large or small or all)")
+            sys.exit("A specialization must be specified! (large or small or all or cross)")
         self.criterion = nn.CrossEntropyLoss(weight=weight_loss).to(self.device)
 
         if args.backbone == 'clfcn':
@@ -84,8 +87,12 @@ class Trainer(object):
                 print('Loading trained model weights...')
                 self.model.load_state_dict(checkpoint['model_state_dict'])
                 print('Loading trained optimizer...')
-                self.optimizer_clft.load_state_dict(checkpoint['optimizer_state_dict'])
-                self.optimizer_clfcn.load_state_dict(checkpoint['optimizer_state_dict'])
+                if args.backbone == 'clft':
+                    self.optimizer_clft.load_state_dict(checkpoint['optimizer_state_dict'])
+                elif args.backbone == 'clfcn':
+                    self.optimizer_clfcn.load_state_dict(checkpoint['optimizer_state_dict'])
+                else:
+                    sys.exit("A backbone must be specified! (clft or clfcn)")
 
         else:
             print('Training from the beginning')
@@ -127,8 +134,11 @@ class Trainer(object):
                 elif self.config['General']['model_specialization'] == 'all':
                     batch_overlap, batch_pred, batch_label, batch_union = \
                         metrics.find_overlap_all_scale(self.nclasses, output_seg, anno)
+                elif self.config['General']['model_specialization'] == 'cross':
+                    batch_overlap, batch_pred, batch_label, batch_union = \
+                        metrics.find_overlap_cross_scale(self.nclasses, output_seg, anno)
                 else:
-                    sys.exit("A specialization must be specified! (large or small or all)")
+                    sys.exit("A specialization must be specified! (large or small or all or cross)")
 
                 overlap_cum += batch_overlap
                 pred_cum += batch_pred
@@ -196,8 +206,11 @@ class Trainer(object):
                 elif self.config['General']['model_specialization'] == 'all':
                     batch_overlap, batch_pred, batch_label, batch_union = \
                         metrics.find_overlap_all_scale(self.nclasses, output_seg, anno)
+                elif self.config['General']['model_specialization'] == 'cross':
+                    batch_overlap, batch_pred, batch_label, batch_union = \
+                        metrics.find_overlap_cross_scale(self.nclasses, output_seg, anno)
                 else:
-                    sys.exit("A specialization must be specified! (large or small or all)")
+                    sys.exit("A specialization must be specified! (large or small or all or cross)")
 
                 overlap_cum += batch_overlap
                 pred_cum += batch_pred
@@ -252,8 +265,11 @@ class Trainer(object):
                 elif self.config['General']['model_specialization'] == 'all':
                     batch_overlap, batch_pred, batch_label, batch_union = \
                         metrics.find_overlap_all_scale(self.nclasses, output, annotation)
+                elif self.config['General']['model_specialization'] == 'cross':
+                    batch_overlap, batch_pred, batch_label, batch_union = \
+                        metrics.find_overlap_cross_scale(self.nclasses, output, annotation)
                 else:
-                    sys.exit("A specialization must be specified! (large or small or all)")
+                    sys.exit("A specialization must be specified! (large or small or all or cross)")
 
                 overlap_cum += batch_overlap
                 pred_cum += batch_pred
@@ -339,8 +355,11 @@ class Trainer(object):
                 elif self.config['General']['model_specialization'] == 'all':
                     batch_overlap, batch_pred, batch_label, batch_union = \
                         metrics.find_overlap_all_scale(self.nclasses, output, annotation)
+                elif self.config['General']['model_specialization'] == 'cross':
+                    batch_overlap, batch_pred, batch_label, batch_union = \
+                        metrics.find_overlap_cross_scale(self.nclasses, output, annotation)
                 else:
-                    sys.exit("A specialization must be specified! (large or small or all)")
+                    sys.exit("A specialization must be specified! (large or small or all or cross)")
 
                 overlap_cum += batch_overlap
                 pred_cum += batch_pred

@@ -1,9 +1,4 @@
 {
-    "CLI": {
-        "backbone": "",
-        "mode": "",
-        "path": "./waymo_dataset/splits_clft/"
-    },
     "General":{
         "device":"cuda:0",
         "epochs":100,
@@ -12,11 +7,11 @@
         "seed":0,
         "model_specialization": "all",
         "resume_training":false,
-        "resume_training_model_path": "/gpfs/mariana/smbhome/totahv/logs/config_x/checkpoint_x.pth",
+        "resume_training_model_path": "/mimer/NOBACKUP/groups/naiss2025-23-40/logs/11-03-2025_1/checkpoint_37.pth",
 	    "reset_lr":false,
         "early_stop_patience": 50,
-        "save_epoch": 5,
-        "model_path": "/gpfs/mariana/smbhome/totahv/logs/config_x/checkpoint_x.pth"
+        "save_epoch": 20,
+        "model_path":"./model_path/clft/clft_base_fusion_checkpoint_313.pth"
     },
     "Log": {
         "logdir_rgb": "/mimer/NOBACKUP/groups/naiss2025-23-40/logs/18-03-2025/",
@@ -30,7 +25,7 @@
         "hooks": [2, 5, 8, 11],
         "reassembles": [4, 8, 16, 32],
         "resample_dim": 256,
-        "model_timm": "vit_base_patch16_384",
+        "model_timm": "vit_base_r50_s16_384",
         "lr_momentum": 0.99
     },
     "CLFCN": {
