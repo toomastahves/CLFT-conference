@@ -19,10 +19,10 @@
         "model_path":""
     },
     "Log": {
-        "logdir": "/gpfs/mariana/smbhome/totahv/icaart2025/config_7/"
+        "logdir": "./icaart2025/config_7/"
     },
     "Visualize": {
-        "model_path": "/gpfs/mariana/smbhome/totahv/icaart2025/config_7/progress_save/checkpoint_228.pth"
+        "model_path": "./icaart2025/config_7/progress_save/checkpoint_299.pth"
     },
     "CLFT": {
         "emb_dim": 768,

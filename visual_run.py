@@ -226,7 +226,7 @@ def run(modality, backbone, config):
         i += 1
 
 # Run script:
-# python visual_run.py --config ./config/config_1.json
+# python visual_run.py --config ./config/config_7.json
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Visual Run Script')
     parser.add_argument('-c', '--config', type=str, required=False, default='config.json', help='The path of the config file')

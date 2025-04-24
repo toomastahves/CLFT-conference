@@ -1,0 +1,23 @@
+services:
+  nvidia-pytorch:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile-nvidia
+    image: nvidia-pytorch:latest
+    container_name: nvidia-pytorch
+    # Mount the current directory to /workspace
+    volumes:
+      - ./:/workspace
+    # Enable NVIDIA GPU access
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    # Run in interactive mode with a terminal
+    stdin_open: true
+    tty: true
+    # Add shared memory size to prevent DataLoader worker errors
+    shm_size: '16g'
