@@ -171,14 +171,9 @@ def draw_test_segmentation_map(outputs):
 def image_overlay(image, segmented_image):
     result = image.copy()
     mask = (segmented_image[:,:,0] > 0) | (segmented_image[:,:,1] > 0) | (segmented_image[:,:,2] > 0)
-
-    for i in range(result.shape[0]):
-        for j in range(result.shape[1]):
-            if mask[i, j]:
-                for c in range(3):
-                    result[i, j, c] = int(segmented_image[i, j, c] * 0.5 + image[i, j, c] * 0.5)
-    
-    return result
+    mask3d = np.stack([mask, mask, mask], axis=2)
+    blended = np.where(mask3d, (segmented_image * 0.5 + image * 0.5).astype(np.uint8), result)
+    return blended
 
 
 def save_model_dict(config, epoch, model, modality, optimizer, save_check=False):
