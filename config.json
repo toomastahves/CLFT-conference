@@ -11,7 +11,7 @@
 	    "reset_lr":false,
         "early_stop_patience": 50,
         "save_epoch": 20,
-        "model_path":"./model_path/clft/clft_base_fusion_checkpoint_313.pth"
+        "model_path":"./models/all_scale.pth"
     },
     "Log": {
         "logdir_rgb": "/mimer/NOBACKUP/groups/naiss2025-23-40/logs/18-03-2025/",
@@ -50,6 +50,7 @@
         "class_all_scale": ["background", "vehicle", "pedestrian", "sign", "cyclist"],
         "class_small_scale": ["background", "cyclist", "sign"],
         "class_large_scale": ["background", "vehicle", "pedestrian"],
+        "class_cross_scale": ["background", "vehicle", "pedestrian", "sign", "cyclist"],
         "class_weight_all_scale": [0.2, 4.0, 67.0, 155.0, 1170.0],
         "class_weight_small_scale": [0.3, 1959.0, 261.0],
         "class_weight_large_scale": [0.34, 8.11, 117.0]
